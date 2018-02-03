@@ -1,59 +1,138 @@
 <odoo>
-  <data>
-    <!-- explicit list view definition -->
-    <!--
-    <record model="ir.ui.view" id="e_wingz.list">
-      <field name="name">eWINGZ list</field>
-      <field name="model">e_wingz.e_wingz</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
-    -->
 
-    <!-- actions opening views on models -->
-    <!--
-    <record model="ir.actions.act_window" id="e_wingz.action_window">
-      <field name="name">eWINGZ window</field>
-      <field name="res_model">e_wingz.e_wingz</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    -->
+    <data>
+        <!-- explicit list view definition -->
+        <!--
+        <record model="ir.ui.view" id="e_wingz.list">
+          <field name="name">eWINGZ list</field>
+          <field name="model">e_wingz.e_wingz</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="value"/>
+              <field name="value2"/>
+            </tree>
+          </field>
+        </record>
+        -->
+        <record model="ir.ui.view" id="e_wingz.list_erec">
+            <field name="name">eWINGZ eRecords</field>
+            <field name="model">ewingz.erec</field>
+            <field name="arch" type="xml">
+                <tree string="eRecords" toolbar="1">
+                    <field name="did"/>
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
 
-    <!-- server action to the one above -->
-    <!--
-    <record model="ir.actions.server" id="e_wingz.action_server">
-      <field name="name">eWINGZ server</field>
-      <field name="model_id" ref="model_e_wingz_e_wingz"/>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": self._name,
-        }
-      </field>
-    </record>
-    -->
+        <record model="ir.ui.view" id="e_wingz.view_erec">
+            <field name="name">OKM Product</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="name">Product Template</attribute>
+                </xpath>
+                <field name="type" position="after">
+                    <field name="default_code" attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/>
+                    <field name="barcode" attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/>
+                </field>
 
-    <!-- Top menu item -->
-    <!--
-    <menuitem name="eWINGZ" id="e_wingz.menu_root"/>
-    -->
-    <!-- menu categories -->
-    <!--
-    <menuitem name="Menu 1" id="e_wingz.menu_1" parent="e_wingz.menu_root"/>
-    <menuitem name="Menu 2" id="e_wingz.menu_2" parent="e_wingz.menu_root"/>
-    -->
-    <!-- actions -->
-    <!--
-    <menuitem name="List" id="e_wingz.menu_1_list" parent="e_wingz.menu_1"
-              action="e_wingz.action_window"/>
-    <menuitem name="Server to list" id="e_wingz" parent="e_wingz.menu_2"
-              action="e_wingz.action_server"/>
-    -->
-  </data>
+                <div name="button_box" position="inside">
+                    <button name="175" type="action" icon="fa-sitemap" class="oe_stat_button"
+                            attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}"
+                            groups="product.group_product_variant">
+                        <field string="Variants" name="product_variant_count" widget="statinfo"/>
+                    </button>
+                </div>
+
+                <xpath expr="//page[@name='sales']" position="after">
+                    <page name="variants" string="Variants" groups="product.group_product_variant">
+                        <field name="attribute_line_ids" widget="one2many_list" context="{'show_attribute': False}">
+                            <tree string="Variants" editable="bottom">
+                                <field name="attribute_id"/>
+                                <field name="value_ids" widget="many2many_tags" options="{'no_create_edit': True}"
+                                       domain="[('attribute_id', '=', attribute_id)]"
+                                       context="{'default_attribute_id': attribute_id}"/>
+                            </tree>
+                        </field>
+                        <p class="oe_grey">
+                            <strong>Warning</strong>: adding or deleting attributes
+                            will delete and recreate existing variants and lead
+                            to the loss of their possible customizations.
+                        </p>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+        <!--
+        <record model="ir.actions.act_window" id="e_wingz.action_window">
+          <field name="name">eWINGZ window</field>
+          <field name="res_model">e_wingz.e_wingz</field>
+          <field name="view_mode">tree,form</field>
+        </record>
+        -->
+        <act_window
+                id="e_wingz.action_erec"
+                name="eWINGZ eRec"
+                res_model="ewingz.erec"
+                view_mode="tree,form"/>
+        <act_window
+                id="e_wingz.action_etrace"
+                name="eWINGZ eTrace"
+                res_model="ewingz.etrace"
+                view_mode="tree,form"/>
+        <act_window
+                id="e_wingz.action_ecrs"
+                name="eWINGZ eCrs"
+                res_model="ewingz.ecrs"
+                view_mode="tree,form"/>
+
+        <!-- server action to the one above -->
+        <!--
+        <record model="ir.actions.server" id="e_wingz.action_server">
+          <field name="name">eWINGZ server</field>
+          <field name="model_id" ref="model_e_wingz_e_wingz"/>
+          <field name="code">
+            action = {
+              "type": "ir.actions.act_window",
+              "view_mode": "tree,form",
+              "res_model": self._name,
+            }
+          </field>
+        </record>
+        -->
+
+        <!-- Top menu item -->
+
+        <menuitem id="e_wingz.menu_root"
+                  name="eWINGZ"/>
+
+        <menuitem id="e_wingz.inventory"
+                  name="Register"
+                  parent="e_wingz.menu_root"/>
+
+        <menuitem id="e_wingz.certs"
+                  name="Certs"
+                  parent="e_wingz.menu_root"/>
+
+        <menuitem id="e_wingz.erec"
+                  name="eRec"
+                  parent="e_wingz.inventory"
+                  action="e_wingz.action_erec"/>
+        <menuitem id="e_wingz.etrace"
+                  name="eTrace"
+                  parent="e_wingz.inventory"
+                  action="e_wingz.action_etrace"/>
+
+        <menuitem id="e_wingz.ecrs"
+                  name="eCrs"
+                  parent="e_wingz.certs"
+                  action="e_wingz.action_ecrs"/>
+
+    </data>
+
 </odoo>
