@@ -1,2 +1,4 @@
-# ewingz_odoo
+eWINGZ ODOO
+===========
+
 eWINGZ Modules and Apps for ODOO
